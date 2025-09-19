@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 
 @Entity()
@@ -27,4 +27,10 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products, { eager: true })
   @JoinColumn({ name: 'categoryId' }) // link the column to relation
   category: Category;
+
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+    createdAt: Date;
+  
+    @UpdateDateColumn({ type: 'timestamp with time zone' })
+    updatedAt: Date;
 }

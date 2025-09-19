@@ -1,32 +1,27 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
+  @ApiProperty()
   id: number;
 
-  @Column({ unique: true })
-  email: string;
-
-  @Column({ unique: true })
+  @Column()
+  @ApiProperty()
   name: string;
 
-  @Column()
-  password: string; // hashed password
+  @Column({ unique: true })
+  @ApiProperty()
+  email: string;
 
-  //  @ApiProperty({ required: false })
+  @Column()
+  @ApiProperty({ description: 'Hashed password', required: false })
+  password: string;
+
+  // @Column({ nullable: true })
+  // @ApiProperty({ required: false })
+  // hashedRefreshToken?: string;
   @Column({ type: 'text', nullable: true, select: false })
   hashedRefreshToken: string | null;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

@@ -2,11 +2,11 @@ import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-// import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
-@Controller('api/v1/auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -32,7 +32,7 @@ export class AuthController {
   }
 
   // Example protected route
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('protected')
   async protectedRoute(@Req() req) {
     return { message: 'You have access', user: req.user };

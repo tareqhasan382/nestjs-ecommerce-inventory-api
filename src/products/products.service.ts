@@ -20,7 +20,7 @@ export class ProductsService {
     if (!categoryId) {
       throw new BadRequestException('categoryId is required');
     }
-
+    
     // Check if category exists
     const category = await this.categoriesService.findOne(categoryId);
     if (!category) {

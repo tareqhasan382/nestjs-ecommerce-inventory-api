@@ -15,13 +15,10 @@ export class User {
   @ApiProperty()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @ApiProperty({ description: 'Hashed password', required: false })
   password: string;
 
-  // @Column({ nullable: true })
-  // @ApiProperty({ required: false })
-  // hashedRefreshToken?: string;
   @Column({ type: 'text', nullable: true, select: false })
   hashedRefreshToken: string | null;
 }

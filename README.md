@@ -23,76 +23,188 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
 
-```bash
-$ npm install
+# 🛒 E-Commerce Inventory API
+
+A RESTful API for managing products, categories, and authentication in an e-commerce inventory system.
+Built with **NestJS**, **TypeScript**, **PostgreSQL**, and **TypeORM**.
+
+---
+
+## 🚀 Features
+
+* **Authentication & Authorization**
+
+  * Register new users with email, username, and hashed password.
+  * Login with JWT-based authentication.
+  * Protected routes.
+
+* **Product Management**
+
+  * Create, update, delete, and list products.
+  * Filter by category, price range, pagination.
+  * Search products by name/description.
+  * Products linked to categories via one-to-many relationship.
+
+* **Category Management**
+
+  * Create, update, delete, and list categories.
+  * View categories with product counts.
+  * Restrict deletion if products are linked.
+
+* **API Documentation**
+
+  * Auto-generated with **Swagger** (`/api/docs`).
+
+---
+
+## 🏗️ Tech Stack
+
+* **Backend:** NestJS (Node.js + TypeScript)
+* **Database:** PostgreSQL (Supabase)
+* **ORM:** TypeORM
+* **Auth:** JWT
+* **Hosting:** Vercel (Backend)
+
+
+---
+
+## 📌 API Endpoints
+
+### 🔐 Auth
+
+* `POST /api/auth/register` → Register new user
+  ```
+  {
+  "name": "Tareq Hasan",
+  "email": "tareq@gmail.com",
+  "password": "securepassword123"
+}
+  ```
+* `POST /api/auth/login` → Login & get JWT
+  ```
+  {
+  "email": "tareq@gmail.com",
+  "password": "securepassword123"
+}
+  ```
+
+### 📦 Products
+
+* `POST /api/products` → Create product
+  ```
+ {
+  "name": "Gaming Laptop",
+  "description": "High performance laptop",
+  "price": 1500.99,
+  "stock": 10,
+  "image": "https://example.com/laptop.jpg",
+  "categoryId": 1
+}
+  ```
+* `GET /api/products` → List all products (filters: category, price range, pagination)
+  ```
+ http://localhost:3000/api/products?categoryId=1&minPrice=10&maxPrice=100&page=1&limit=10
+  ```
+* `GET /api/products/:id` → Get product by ID
+  ```
+ http://localhost:3000/api/products/1
+  ```
+* `PUT /api/products/:id` → Update product
+  ```
+ http://localhost:3000/api/products/1
+
+ {
+  "name": "Gaming Laptop",
+  "description": "High performance laptop",
+  "price": 1500.99,
+  "stock": 10
+}
+  ```
+* `DELETE /api/products/:id` → Delete product
+  ```
+ http://localhost:3000/api/products/search?q=laptop
+  ```
+* `GET /api/products/search?q=keyword` → Search products
+  ```
+ 
+
+### 🗂 Categories
+
+* `POST /api/categories` → Create category
+* `GET /api/categories` → List all categories with product counts
+* `GET /api/categories/:id` → Get category by ID
+* `PUT /api/categories/:id` → Update category
+* `DELETE /api/categories/:id` → Delete category (if no products linked)
+ 
+
+## 📖 Swagger Docs
+
+Swagger UI is available at:
+
+```
+{BASE_URL}/api/docs
 ```
 
-## Compile and run the project
+Example:
+[http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone Repository
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/tareqhasan382/nestjs-ecommerce-inventory-api
+cd ecommerce-inventory-api
 ```
 
-## Run tests
+### 2️⃣ Install Dependencies
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+### 3️⃣ Setup Environment Variables
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Create a `.env` file in root:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+DATABASE_URL="postgresql://postgres................"
+JWT_SECRET="your_jwt_secret"
+JWT_REFRESH_SECRET="your_jwt_refresh_secret"
+```
+
+### 4️⃣ Run Migrations
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run migration:run
+
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 5️⃣ Start Server
 
-## Resources
+```bash
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Server will run on:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```
+http://localhost:3000
+```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## ✅ Evaluation Checklist
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+* [x] Authentication (Register/Login with JWT)
+* [x] Secure CRUD for Products & Categories
+* [x] Filters, Pagination, Search
+* [x] Swagger API Docs
+* [x] Deployment (Backend + DB)
 
-## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

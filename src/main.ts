@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-//import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   try {
@@ -17,13 +17,13 @@ async function bootstrap() {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api-docs', app, document);
-    // app.useGlobalPipes(
-    //   new ValidationPipe({
-    //     whitelist: true, // strip unknown properties
-    //     forbidNonWhitelisted: true, // error on extra fields
-    //     transform: true, // transform types (e.g. strings to numbers)
-    //   }),
-    // );
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true, // strip unknown properties
+        forbidNonWhitelisted: true, // error on extra fields
+        transform: true, // transform types (e.g. strings to numbers)
+      }),
+    );
     await app.listen(3000);
   } catch (err) {
     console.error('Error during bootstrap', err);

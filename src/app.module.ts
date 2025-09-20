@@ -15,7 +15,7 @@ import { ProductsModule } from './products/products.module';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
-      synchronize: true, // turn off in production
+      synchronize: false, // turn off in production
       ssl: {
           rejectUnauthorized: false, // Required for Supabase
         },

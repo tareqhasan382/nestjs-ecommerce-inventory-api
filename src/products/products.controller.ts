@@ -13,7 +13,7 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
 import { FilterProductDto } from './dto/filter-product.dto';
 
@@ -49,6 +49,15 @@ export class ProductsController {
     Number(limit),
   );
   }
+
+@Get('search')
+@ApiOperation({ summary: 'Search products by keyword (name/description)' })
+@ApiQuery({ name: 'q', type: String, required: true, description: 'Search keyword' })
+@ApiResponse({ status: 200, type: [Product] })
+async search(@Query('q') keyword: string) {
+  return this.productsService.searchProducts(keyword);
+}
+
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by ID' })

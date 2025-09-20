@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
+import { Repository, Between, MoreThanOrEqual, LessThanOrEqual, ILike } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -64,6 +64,28 @@ async findAll(
 
   return { data, total, page, limit };
 }
+
+async searchProducts(keyword: string): Promise<Product[]> {
+  if (!keyword || keyword.trim() === '') {
+    throw new BadRequestException('Search query "q" is required');
+  }
+
+  const products = await this.productRepository.find({
+    where: [
+      { name: ILike(`%${keyword}%`) },
+      { description: ILike(`%${keyword}%`) },
+    ],
+    relations: ['category'], 
+    order: { createdAt: 'DESC' },
+  });
+
+  if (!products.length) {
+    throw new NotFoundException(`No products found for keyword "${keyword}"`);
+  }
+
+  return products;
+}
+
 
   async findOne(id: number): Promise<Product> {
     const product = await this.productRepository.findOne({ where: { id } });

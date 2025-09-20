@@ -29,8 +29,8 @@ export class Product {
   category: Category;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-    createdAt: Date;
+  createdAt: Date;
   
-    @UpdateDateColumn({ type: 'timestamp with time zone' })
-    updatedAt: Date;
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  updatedAt: Date;
 }

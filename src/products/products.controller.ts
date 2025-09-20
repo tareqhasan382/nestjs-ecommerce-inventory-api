@@ -8,12 +8,14 @@ import {
   Delete,
   ParseIntPipe,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
+import { FilterProductDto } from 'src/products/dto/filter-product.dto';
 
 @ApiTags('products') 
 @Controller('api/products')
@@ -28,10 +30,24 @@ export class ProductsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all products' })
+  @ApiOperation({ summary: 'Get all products with filters and pagination' })
   @ApiResponse({ status: 200, type: [Product] })
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Query() query: FilterProductDto) {
+  const {
+    categoryId,
+    minPrice,
+    maxPrice,
+    page = '1',
+    limit = '10',
+  } = query;
+
+  return this.productsService.findAll(
+    categoryId ? Number(categoryId) : undefined,
+    minPrice ? Number(minPrice) : undefined,
+    maxPrice ? Number(maxPrice) : undefined,
+    Number(page),
+    Number(limit),
+  );
   }
 
   @Get(':id')

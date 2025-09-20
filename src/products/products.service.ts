@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -30,9 +30,40 @@ export class ProductsService {
     return this.productRepository.save(product);
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.find();
+async findAll(
+  categoryId?: number,
+  minPrice?: number,
+  maxPrice?: number,
+  page = 1,
+  limit = 10,
+): Promise<{ data: Product[]; total: number; page: number; limit: number }> {
+  const where: any = {};
+
+  if (categoryId !== undefined) {
+    where.categoryId = categoryId;
   }
+
+  if (minPrice !== undefined && maxPrice !== undefined) {
+    where.price = Between(minPrice, maxPrice);
+  } else if (minPrice !== undefined) {
+    where.price = MoreThanOrEqual(minPrice);
+  } else if (maxPrice !== undefined) {
+    where.price = LessThanOrEqual(maxPrice);
+  }
+
+  const [data, total] = await this.productRepository.findAndCount({
+    where,
+    skip: (page - 1) * limit,
+    take: limit,
+    order: { id: 'DESC' },
+  });
+
+  if (!data.length) {
+    throw new NotFoundException('No products found for the given filters');
+  }
+
+  return { data, total, page, limit };
+}
 
   async findOne(id: number): Promise<Product> {
     const product = await this.productRepository.findOne({ where: { id } });

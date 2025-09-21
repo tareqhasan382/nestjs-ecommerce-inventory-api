@@ -20,7 +20,7 @@ import { Product } from './entities/product.entity';
 import { FilterProductDto } from './dto/filter-product.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @ApiTags('products') 
 @Controller('api/products')
 export class ProductsController {

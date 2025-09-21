@@ -10,6 +10,7 @@ import {
   Put,
   Query,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -19,7 +20,7 @@ import { Product } from './entities/product.entity';
 import { FilterProductDto } from './dto/filter-product.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 @ApiTags('products') 
 @Controller('api/products')
 export class ProductsController {
@@ -28,14 +29,20 @@ export class ProductsController {
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, type: Product })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  async create(@Body() createProductDto: CreateProductDto) {
+    const result = await this.productsService.create(createProductDto);;
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Product created successfully',
+      data: result,
+    };
+
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all products with filters and pagination' })
   @ApiResponse({ status: 200, type: [Product] })
-  findAll(@Query() query: FilterProductDto) {
+  async findAll(@Query() query: FilterProductDto) {
   const {
     categoryId,
     minPrice,
@@ -43,14 +50,19 @@ export class ProductsController {
     page = '1',
     limit = '10',
   } = query;
-
-  return this.productsService.findAll(
+    const result = await this.productsService.findAll(
     categoryId ? Number(categoryId) : undefined,
     minPrice ? Number(minPrice) : undefined,
     maxPrice ? Number(maxPrice) : undefined,
     Number(page),
     Number(limit),
   );
+  return {
+      statusCode: HttpStatus.OK,
+      message: 'Products retrieved successfully',
+      data: result,
+    };
+
   }
 
 @Get('search')
@@ -58,7 +70,12 @@ export class ProductsController {
 @ApiQuery({ name: 'q', type: String, required: true, description: 'Search keyword' })
 @ApiResponse({ status: 200, type: [Product] })
 async search(@Query('q') keyword: string) {
-  return this.productsService.searchProducts(keyword);
+  const result = await this.productsService.searchProducts(keyword);
+  return {
+    statusCode: HttpStatus.OK,
+    message: 'Products retrieved successfully',
+    data: result,
+  };
 }
 
 
@@ -66,8 +83,14 @@ async search(@Query('q') keyword: string) {
   @ApiOperation({ summary: 'Get a product by ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, type: Product })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const result= await this.productsService.findOne(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: `Product with ID ${id} retrieved successfully`,
+      data: result,
+    };
+
   }
 
   @Put(':id')
@@ -75,11 +98,17 @@ async search(@Query('q') keyword: string) {
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Product updated', type: Product })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    return this.productsService.update(id, updateProductDto);
+    const result= await this.productsService.update(id, updateProductDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: `Product with ID ${id} updated successfully`,
+      data: result,
+    };
+
   }
 
   @Delete(':id')
@@ -87,7 +116,12 @@ async search(@Query('q') keyword: string) {
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Product deleted' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.productsService.remove(id);
+    return {
+      statusCode: HttpStatus.NO_CONTENT,
+      message: `result with ID ${id} deleted successfully`,
+    };
+
   }
 }

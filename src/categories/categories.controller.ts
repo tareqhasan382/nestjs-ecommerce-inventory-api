@@ -7,7 +7,7 @@ import {
   Delete,
   Put,
   ParseIntPipe,
-  UseGuards,
+  UseGuards, HttpStatus,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -25,41 +25,65 @@ export class CategoriesController {
   @Post()
   @ApiOperation({ summary: 'Create a new category' })
   @ApiResponse({ status: 201, description: 'Category created', type: Category })
-  create(@Body() dto: CreateCategoryDto) {
-    return this.categoriesService.create(dto);
+  async create(@Body() dto: CreateCategoryDto) {
+    const result = await this.categoriesService.create(dto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Category created successfully',
+      data: result,
+    };
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all categories with product counts' })
   @ApiResponse({ status: 200, type: [Category] })
-  findAll() {
-    return this.categoriesService.findAll();
+  async findAll() {
+    const result = await this.categoriesService.findAll();
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Get all Category successfully',
+      data: result,
+    };
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get category by ID with products' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, type: Category })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.categoriesService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.categoriesService.findOne(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: `category with ID ${id} retrieved successfully`,
+      data: result,
+    };
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update category by ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Category updated', type: Category })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(id, dto);
+    const result = await this.categoriesService.update(id, dto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: `Category with ID ${id} updated successfully`,
+      data: result,
+    };
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete category by ID (only if no products)' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Category deleted' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.categoriesService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.categoriesService.remove(id);
+    return {
+      statusCode: HttpStatus.NO_CONTENT,
+      message: `Category with ID ${id} deleted successfully`,
+    };
   }
 }
